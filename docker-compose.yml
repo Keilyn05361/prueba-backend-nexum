@@ -13,6 +13,23 @@ services:
       db:
         condition: service_healthy
 
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexum_queue
+    command: ["php", "artisan", "queue:work"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      LOG_CHANNEL: stderr
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_started
+
   db:
     image: mysql:8.0
     container_name: nexum_db
